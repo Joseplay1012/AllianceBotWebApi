@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Transcrição</title>
+    <link rel="stylesheet" href="https://cdnalc.pages.dev/css/transcripts.css">
+</head>
+<body>
+<header>
+    <h1>Transcrições de usuarios disponíveis</h1>
+</header>
+
+<div class="container">
+    <div th:each="file : ${files}" class="file-box">
+        <!-- Exibe o nome do diretório sem tentar manipular o nome -->
+        <a th:href="@{'/tickets/' + ${file}}"
+           th:text="${file}"></a>
+        <!-- <div class="file-date">
+            Criado em: <span th:text="${file.lastModified}"></span>
+        </div> -->
+    </div>
+</div>
+</body>
+</html>
