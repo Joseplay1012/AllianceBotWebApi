@@ -1,5 +1,6 @@
 package net.alliancecraft.AllianceBotWebApi.TicketControllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,9 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,11 +28,13 @@ import java.util.List;
 
 @Controller
 public class TicketController {
+    @Autowired
+    private SpringTemplateEngine templateEngine;
 
     @GetMapping("/tickets/{userid}/{ticket}")
     public ResponseEntity<String> getTicket(
             @PathVariable("userid") String userid,
-            @PathVariable("ticket") String ticket) {
+            @PathVariable("ticket") String ticket, Model model) {
         // Caminho para o arquivo HTML
         Path path = Paths.get("transcripts", userid ,ticket + ".html");
 
@@ -41,8 +48,16 @@ public class TicketController {
                     .body(htmlContent);
         } catch (IOException e) {
             // Em caso de erro ao ler o arquivo
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao ler o arquivo HTML.");
+            Context context = new Context();
+            context.setVariable("customErroTitle", "404 - Transcrição não Encontrada");
+            context.setVariable("customErroMessage", "A transcrição que você está procurando não existe ou ainda não foi gerada!");
+
+            String renderedError = templateEngine.process("errorCustom", context);
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(renderedError);
         }
     }
 
@@ -55,7 +70,8 @@ public class TicketController {
 
         for (File file : files) {
             String path = file.getAbsolutePath();
-            fileInfoList.add(new FileInfo(file.getName().replace(".html", ""), path, file.getParentFile().getName()));
+            long lastModified = file.lastModified();
+            fileInfoList.add(new FileInfo(file.getName().replace(".html", ""), path, file.getParentFile().getName(), lastModified));
         }
 
         model.addAttribute("files", fileInfoList);

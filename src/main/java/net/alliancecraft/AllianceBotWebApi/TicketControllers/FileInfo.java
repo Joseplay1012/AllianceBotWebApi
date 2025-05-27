@@ -4,12 +4,14 @@ public class FileInfo {
     private String name;
     private String directory;
     private String path;
+    private long lastModified;
 
     // Construtores, getters e setters
-    public FileInfo(String name, String path, String directory) {
+    public FileInfo(String name, String path, String directory, long lastModified) {
         this.name = name;
         this.path = path;
         this.directory = directory;
+        this.lastModified = lastModified;
     }
 
     public String getName() {
@@ -34,6 +36,14 @@ public class FileInfo {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
     }
 }
 

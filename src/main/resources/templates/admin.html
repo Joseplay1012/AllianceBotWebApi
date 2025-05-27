@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            font-size: 26px;
+            border-bottom: 1px solid #333;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .section {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #00ff88;
+        }
+
+        .button {
+            background-color: #00c97d;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .button:hover {
+            background-color: #00a86b;
+        }
+
+        .input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: none;
+            background-color: #2a2a2a;
+            color: white;
+        }
+
+        .log {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            font-family: monospace;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        Painel de Administração
+    </div>
+
+    <div class="container">
+
+        <!-- Gerenciamento de Jogadores -->
+        <div class="section">
+            <h2>Gerenciar Jogadores</h2>
+            <input class="input" type="text" id="playerName" placeholder="Nome do jogador">
+            <button class="button" onclick="banPlayer()">Banir</button>
+            <button class="button" onclick="kickPlayer()">Kickar</button>
+            <button class="button" onclick="mutePlayer()">Mutar</button>
+            <button class="button" onclick="giveItem()">Dar Item</button>
+            <button class="button" onclick="promotePlayer()">Promover</button>
+            <button class="button" onclick="demotePlayer()">Rebaixar</button>
+        </div>
+
+        <!-- Gerenciamento do Servidor -->
+        <div class="section">
+            <h2>Servidor</h2>
+            <button class="button" onclick="restartServer()">Reiniciar Servidor</button>
+            <button class="button" onclick="shutdownServer()">Desligar Servidor</button>
+            <button class="button" onclick="clearEntities()">Limpar Entidades</button>
+            <button class="button" onclick="enableMaintenance()">Ativar Manutenção</button>
+            <button class="button" onclick="disableMaintenance()">Desativar Manutenção</button>
+        </div>
+
+        <!-- Logs -->
+        <div class="section">
+            <h2>Logs do Sistema</h2>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        const players = ["Steve", "Alex", "Notch", "Herobrine", "Player123", "Zezin", "Brunex", "AdminFake"];
+        const actions = [
+            "foi banido por uso de hacks",
+            "recebeu 64 blocos de diamante",
+            "foi kickado por flood",
+            "tentou usar comando sem permissão",
+            "entrou no servidor",
+            "saiu do servidor",
+            "foi promovido para operador",
+            "teve permissão removida",
+            "tentou acessar /admin",
+            "foi colocado no modo criativo",
+            "foi colocado no modo sobrevivência"
+        ];
+
+        function getPlayerInput() {
+            const input = document.getElementById('playerName').value.trim();
+            return input.length > 0 ? input : players[Math.floor(Math.random() * players.length)];
+        }
+
+        function addLogEntry(text) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString();
+            entry.textContent = `[${time}] ${text}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Ações de botões
+        function banPlayer() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} foi BANIDO`);
+        }
+
+        function kickPlayer() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} foi KICKADO`);
+        }
+
+        function mutePlayer() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} foi MUTADO`);
+        }
+
+        function giveItem() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} recebeu ITEM ESPECIAL`);
+        }
+
+        function promotePlayer() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} foi PROMOVIDO para operador`);
+        }
+
+        function demotePlayer() {
+            const player = getPlayerInput();
+            addLogEntry(`${player} foi REBAIXADO`);
+        }
+
+        function restartServer() {
+            addLogEntry(`Servidor está REINICIANDO...`);
+        }
+
+        function shutdownServer() {
+            addLogEntry(`Servidor DESLIGANDO...`);
+        }
+
+        function clearEntities() {
+            addLogEntry(`Todas as ENTIDADES foram REMOVIDAS`);
+        }
+
+        function enableMaintenance() {
+            addLogEntry(`Modo MANUTENÇÃO ATIVADO`);
+        }
+
+        function disableMaintenance() {
+            addLogEntry(`Modo MANUTENÇÃO DESATIVADO`);
+        }
+
+        // Logs automáticos
+        function getRandomLog() {
+            const player = players[Math.floor(Math.random() * players.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const time = new Date().toLocaleTimeString();
+            return `[${time}] ${player} ${action}`;
+        }
+
+        // Gera logs automáticos a cada 2~5 segundos
+        setInterval(() => {
+            const log = getRandomLog();
+            addLogEntry(log);
+        }, Math.random() * 3000 + 2000);
+
+        // Logs iniciais
+        for (let i = 0; i < 5; i++) {
+            addLogEntry(getRandomLog());
+        }
+    </script>
+
+</body>
+</html>
+

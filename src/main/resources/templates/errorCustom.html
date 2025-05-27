@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <link rel="shortcut icon"
           href="https://www.alliancecraft.net/uploads/6a4a636c2d1283e9045cce5d5c3af591f0fda954logo.webp"
@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erro 404 - Página Não Encontrada</title>
+    <title th:text="${customErroTitle}">Erro 404 - Página Não Encontrada</title>
     <link rel="stylesheet" href="https://joseplay1012.github.io/Viwer_alliancecraft_template/estilos/404.css">
     <div class="profile-button">
         <a href="/login"><i class="fas fa-user"></i></a>
@@ -15,8 +15,8 @@
 </head>
 <body>
 <div class="container">
-    <h2>Erro 404 - Página Não Encontrada</h2>
-    <p>A página que você está procurando não foi encontrada.</p>
+    <h2 th:text="${customErroTitle}">Erro 404 - Página Não Encontrada</h2>
+    <p th:text="${customErroMessage}">A página que você está procurando não existe ou ainda não foi gerada.</p>
     <p>Acha que foi um erro? entre em contato com o suporte no discord!</p>
     <body>
     <a href="/">

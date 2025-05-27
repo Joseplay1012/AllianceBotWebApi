@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AllianceBotWebApiApplication {
 
 	public static void main(String[] args) {
+		IPBanFilter.loadBanIps();
 		SpringApplication.run(AllianceBotWebApiApplication.class, args);
 	}
 
