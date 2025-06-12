@@ -107,10 +107,8 @@ public class TicketController {
         return "usersTranscripts"; // Nome do template a ser renderizado
     }
 
-    @GetMapping("/")
+    @GetMapping("/transcripts")
     public String getTicketsIndex(Model model){
-        return "index"; // Nome do template a ser renderizado
+        return "transcriptsIndex"; // Nome do template a ser renderizado
     }
-
-
 }

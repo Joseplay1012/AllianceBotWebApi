@@ -1,5 +1,7 @@
 package net.alliancecraft.AllianceBotWebApi.userControllers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import net.alliancecraft.AllianceBotWebApi.services.BotWebSocketService;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -7,15 +9,20 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.time.Instant;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api")
-public class UserJsonController {
+public class ApiController {
 
     private static final String BASE_DIR = "api/users/";
     private static final String BASE_DIR_BADGES = "api/badges/";
+    private static final long RATE_LIMIT_INTERVAL_MS = 5000; // 5 segundos
+    private final Map<String, Long> ipAccessMap = new ConcurrentHashMap<>();
 
     // Tokens válidos
     private static final Set<String> validTokens = Set.of(
@@ -119,6 +126,26 @@ public class UserJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"Erro ao salvar ou JSON inválido\"}");
+        }
+    }
+
+    @GetMapping("/bot/status")
+    public ResponseEntity<String> getBotStatus(HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        long now = Instant.now().toEpochMilli();
+
+        Long lastAccess = ipAccessMap.get(ip);
+        if (lastAccess != null && now - lastAccess < RATE_LIMIT_INTERVAL_MS) {
+            return ResponseEntity.status(429).body("{\"error\": \"Você está enviando muitas requisições. Aguarde alguns segundos.\"}");
+        }
+
+        ipAccessMap.put(ip, now);
+
+        try {
+            BotWebSocketService webSocketService = new BotWebSocketService();
+            return ResponseEntity.ok(new JSONObject(webSocketService.getResponse()).toString(4));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
